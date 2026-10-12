@@ -1,7 +1,20 @@
+git import os
 import sqlite3
 from pathlib import Path
 
-DB_PATH = Path(__file__).resolve().parent.parent / "library.db"
+# Vercel's deployed application directory is not a writable persistent disk.
+# Use /tmp there so the app can start; locally, keep the database in the project.
+# For persistent production data, configure DATABASE_PATH for a supported hosted DB
+# or migrate to a hosted database service.
+if os.environ.get("VERCEL"):
+    DB_PATH = Path(os.environ.get("DATABASE_PATH", "/tmp/library.db"))
+else:
+    DB_PATH = Path(os.environ.get(
+        "DATABASE_PATH",
+        str(Path(__file__).resolve().parent.parent / "library.db")
+    ))
+
+DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS members (
