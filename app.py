@@ -232,6 +232,7 @@ def create_app(db_path=None):
     @app.get("/api/my/books")
     def my_books():
         return jsonify(rows(svc().my_creations(me()["id"])))
+#Deploy
 
     @app.post("/api/my/books")
     def create_book():
